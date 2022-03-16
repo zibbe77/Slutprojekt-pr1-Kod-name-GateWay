@@ -4,6 +4,7 @@ using UnityEngine;
 
 public class Playercontroller : MonoBehaviour
 {
+
     public int hp = 100;
     public int dmg = 20;
     float speed = 10;
