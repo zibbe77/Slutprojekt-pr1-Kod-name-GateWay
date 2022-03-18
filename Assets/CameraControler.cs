@@ -4,7 +4,6 @@ using UnityEngine;
 
 public class CameraControler : MonoBehaviour
 {
-
     public GameObject player;
 
     // Start is called before the first frame update
@@ -22,7 +21,7 @@ public class CameraControler : MonoBehaviour
             player.transform.position.y,
             transform.position.z
         );
-
+            
 
         //player.GetComponent<Playercontroller>().position
     }
