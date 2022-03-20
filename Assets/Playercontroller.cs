@@ -23,8 +23,8 @@ public class Playercontroller : MonoBehaviour
         rb2D = gameObject.GetComponent<Rigidbody2D>();
 
 
-        speed = 0.1f;
-        jumpforce = 2;
+        speed = 1;
+        jumpforce = 10;
         isJump = false;
         isGrund = true;
 
@@ -35,8 +35,6 @@ public class Playercontroller : MonoBehaviour
     void Update()
     {
         moveHorizontal = Input.GetAxisRaw("Horizontal");
-        //position = new Vector2(Input.GetAxisRaw("Horizontal") * speed * Time.deltaTime, Input.GetAxisRaw("Vertical") * speed * Time.deltaTime);
-        // transform.Translate(position);
         if (Input.GetKey("space") == true)
         {
             isJump = true;
@@ -45,33 +43,46 @@ public class Playercontroller : MonoBehaviour
     }
     void FixedUpdate()
     {
-        if (moveHorizontal > 0 || moveHorizontal < 0)
+        if (moveHorizontal > 0.1 || moveHorizontal < 0.1)
         {
-            rb2D.AddForce(new Vector2(moveHorizontal * speed, 0f), ForceMode2D.Impulse);
+            // rb2D.AddForce(new Vector2(moveHorizontal * speed, 0f), ForceMode2D.Impulse);
+            rb2D.velocity = new Vector2(moveHorizontal * speed , rb2D.velocity.y);
         }
 
-        if (isGrund && isJump == true)
+        if (isGrund == true && isJump == true)
         {
-            rb2D.AddForce(new Vector2(0f, jumpforce), ForceMode2D.Impulse);
+            //rb2D.AddForce(new Vector2(0f, jumpforce), ForceMode2D.Impulse);
+            rb2D.velocity = new Vector2(rb2D.velocity.x, jumpforce);
             isJump = false;
         }
 
     }
-    void OnTriggerEnter2D(Collider2D collision)
+    private void OnTriggerEnter2D(Collider2D collision)
     {
-        Debug.Log("isgrund");
-        if (collision.gameObject.tag == "grid")
+        if (collision.gameObject.tag == "box")
         {
-            isGrund = true;
-            
+            Debug.Log("box");
         }
     }
-    void OnTriggerExit2D(Collider2D collision)
+    private void OnTriggerExit2D(Collider2D collision)
     {
-        if (collision.gameObject.tag == "grid")
+      
+    }
+
+    private void OnCollisionEnter2D(Collision2D other)
+    {
+        if (other.gameObject.tag == "Grid")
+        {
+            isGrund = true;
+            Debug.Log("nya");
+        }
+    }
+
+    private void OnCollisionExit2D(Collision2D other) {
+        
+        if (other.gameObject.tag == "Grid")
         {
             isGrund = false;
-            Debug.Log("left");
         }
     }
 }
