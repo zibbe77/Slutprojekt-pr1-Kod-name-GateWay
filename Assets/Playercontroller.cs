@@ -23,8 +23,8 @@ public class Playercontroller : MonoBehaviour
         rb2D = gameObject.GetComponent<Rigidbody2D>();
 
 
-        speed = 1;
-        jumpforce = 10;
+        speed = 3;
+        jumpforce = 5;
         isJump = false;
         isGrund = true;
 
@@ -37,7 +37,10 @@ public class Playercontroller : MonoBehaviour
         moveHorizontal = Input.GetAxisRaw("Horizontal");
         if (Input.GetKey("space") == true)
         {
-            isJump = true;
+            if (isGrund == true)
+            {
+                isJump = true;
+            }
         }
 
     }
@@ -46,7 +49,7 @@ public class Playercontroller : MonoBehaviour
         if (moveHorizontal > 0.1 || moveHorizontal < 0.1)
         {
             // rb2D.AddForce(new Vector2(moveHorizontal * speed, 0f), ForceMode2D.Impulse);
-            rb2D.velocity = new Vector2(moveHorizontal * speed , rb2D.velocity.y);
+            rb2D.velocity = new Vector2(moveHorizontal * speed, rb2D.velocity.y);
         }
 
         if (isGrund == true && isJump == true)
@@ -66,7 +69,7 @@ public class Playercontroller : MonoBehaviour
     }
     private void OnTriggerExit2D(Collider2D collision)
     {
-      
+
     }
 
     private void OnCollisionEnter2D(Collision2D other)
@@ -78,8 +81,9 @@ public class Playercontroller : MonoBehaviour
         }
     }
 
-    private void OnCollisionExit2D(Collision2D other) {
-        
+    private void OnCollisionExit2D(Collision2D other)
+    {
+
         if (other.gameObject.tag == "Grid")
         {
             isGrund = false;
