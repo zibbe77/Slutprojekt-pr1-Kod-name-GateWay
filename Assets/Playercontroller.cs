@@ -27,22 +27,19 @@ public class Playercontroller : MonoBehaviour
         jumpforce = 5;
         isJump = false;
         isGrund = true;
-
-        Debug.Log("runing2");
     }
 
     // Update is called once per frame
     void Update()
     {
         moveHorizontal = Input.GetAxisRaw("Horizontal");
-        if (Input.GetKey("space") == true)
+        if (Input.GetKey(KeyCode.Space) == true)
         {
             if (isGrund == true)
             {
                 isJump = true;
             }
         }
-
     }
     void FixedUpdate()
     {
@@ -64,7 +61,7 @@ public class Playercontroller : MonoBehaviour
     {
         if (collision.gameObject.tag == "box")
         {
-            Debug.Log("box");
+
         }
     }
     private void OnTriggerExit2D(Collider2D collision)
@@ -77,7 +74,6 @@ public class Playercontroller : MonoBehaviour
         if (other.gameObject.tag == "Grid")
         {
             isGrund = true;
-            Debug.Log("nya");
         }
     }
 
