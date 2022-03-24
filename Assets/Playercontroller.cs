@@ -26,35 +26,46 @@ public class Playercontroller : MonoBehaviour
         {
             if (isGrund == true)
             {
-                Debug.Log("j");
                 isJump = true;
             }
         }
     }
     void FixedUpdate()
     {
+        // gå
         if (moveHorizontal > 0 || moveHorizontal < 0)
         {
-            Debug.Log(rb2D.velocity);
             rb2D.AddForce(new Vector2(moveHorizontal * speed, 0), ForceMode2D.Impulse);
             //rb2D.velocity = new Vector2(moveHorizontal * speed, rb2D.velocity.y);
 
         }
 
+        // hoppa 
         if (isGrund == true && isJump == true)
         {
             rb2D.AddForce(new Vector2(0, jumpforce), ForceMode2D.Impulse);
             //rb2D.velocity = new Vector2(rb2D.velocity.x, jumpforce);
             isJump = false;
         }
+        
 
-        if (rb2D.velocity.x >= 5)
-        {
+        // läs här igen sen
+        // https://answers.unity.com/questions/9985/limiting-rigidbody-velocity.html den är om, magnitude. då avänder den inte men bra att veta
+#region max speed
+        Debug.Log(rb2D.velocity.magnitude);
+        if( Mathf.Abs(rb2D.velocity.x) > 8){
             Debug.Log("yes");
-            rb2D.AddForce(new Vector2(moveHorizontal * -speed, 0), ForceMode2D.Impulse);
+            rb2D.AddForce(new Vector2(-moveHorizontal * speed, 0), ForceMode2D.Impulse);
         }
+    
+#endregion
 
-
+        //if (rb2D.velocity.x >= 5)
+        //{
+          //  Debug.Log("yes");
+         //   rb2D.AddForce(new Vector2(moveHorizontal * -speed, 0), ForceMode2D.Impulse);
+       // }
+       
     }
     private void OnTriggerEnter2D(Collider2D collision)
     {
