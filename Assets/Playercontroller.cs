@@ -54,6 +54,7 @@ public class Playercontroller : MonoBehaviour
             rb2D.AddForce(new Vector2(moveHorizontal * -speed, 0), ForceMode2D.Impulse);
         }
 
+
     }
     private void OnTriggerEnter2D(Collider2D collision)
     {
