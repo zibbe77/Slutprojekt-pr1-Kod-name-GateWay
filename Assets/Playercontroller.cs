@@ -43,8 +43,9 @@ public class Playercontroller : MonoBehaviour
     }
     void FixedUpdate()
     {
+        #region transulating input
         
-        rb2D.AddForce(new Vector2(moveHorizontal * speed, 0), ForceMode2D.Impulse);
+         rb2D.AddForce(new Vector2(moveHorizontal * speed, 0), ForceMode2D.Impulse);
 
         if (isGrund == true && isJump == true)
         {
@@ -53,16 +54,21 @@ public class Playercontroller : MonoBehaviour
         }
 
         if(down == true) {
+            
             rb2D.AddForce(new Vector2(0, -speed), ForceMode2D.Impulse);
             down = false;
         }
-        
+
         if (Mathf.Abs(rb2D.velocity.x) > 8)
         {
             rb2D.AddForce(new Vector2(-moveHorizontal * speed, 0), ForceMode2D.Impulse);
         }
-   
+
+        
+        
+        #endregion
     }
+    #region cheking coliders 
     private void OnTriggerEnter2D(Collider2D collision)
     {
         if (collision.gameObject.tag == "box")
@@ -91,4 +97,5 @@ public class Playercontroller : MonoBehaviour
             isGrund = false;
         }
     }
+    #endregion
 }
