@@ -33,8 +33,8 @@ public class Playercontroller : MonoBehaviour
         moveHorizontal = Input.GetAxisRaw("Horizontal");
 
         //hop input
-
-        RaycastHit2D hit2D = Physics2D.BoxCast(rb2D.position, new Vector2(cC2D.size.x, 0.5f), 0, Vector2.down);
+        
+        RaycastHit2D hit2D = Physics2D.BoxCast(rb2D.position, new Vector2(cC2D.size.x, 1f), 0, Vector2.down);
 
         if (Input.GetKey(KeyCode.Space) == true)
         {
