@@ -4,7 +4,10 @@ using UnityEngine;
 
 public class Playercontroller : MonoBehaviour
 {
+    #region Class varjablar
+
     Rigidbody2D rb2D;
+    CapsuleCollider2D cC2D;
     public float speed = 1;
     public float jumpforce = 10;
     bool isJump = false;
@@ -13,10 +16,13 @@ public class Playercontroller : MonoBehaviour
 
     float moveHorizontal;
 
+    #endregion
+
     // Start is called before the first frame update
     void Start()
     {
         rb2D = gameObject.GetComponent<Rigidbody2D>();
+        cC2D = gameObject.GetComponent<CapsuleCollider2D>();
     }
 
     // Update is called once per frame
@@ -27,6 +33,9 @@ public class Playercontroller : MonoBehaviour
         moveHorizontal = Input.GetAxisRaw("Horizontal");
 
         //hop input
+
+        RaycastHit2D hit2D = Physics2D.BoxCast(rb2D.position, new Vector2(cC2D.size.x, 0.5f), 0, Vector2.down);
+
         if (Input.GetKey(KeyCode.Space) == true)
         {
             if (isGrund == true)
@@ -44,30 +53,36 @@ public class Playercontroller : MonoBehaviour
     void FixedUpdate()
     {
         #region transulating input
-        
-         rb2D.AddForce(new Vector2(moveHorizontal * speed, 0), ForceMode2D.Impulse);
 
+        //gå 
+        rb2D.AddForce(new Vector2(moveHorizontal * speed, 0), ForceMode2D.Impulse);
+
+        // hoppar 
         if (isGrund == true && isJump == true)
         {
             rb2D.AddForce(new Vector2(0, jumpforce), ForceMode2D.Impulse);
             isJump = false;
         }
 
-        if(down == true) {
-            
+        //rör dig neråt 
+        if (down == true)
+        {
+
             rb2D.AddForce(new Vector2(0, -speed), ForceMode2D.Impulse);
             down = false;
         }
 
+        // begränsar accelrationen 
         if (Mathf.Abs(rb2D.velocity.x) > 8)
         {
             rb2D.AddForce(new Vector2(-moveHorizontal * speed, 0), ForceMode2D.Impulse);
         }
 
-        
-        
+
+
         #endregion
     }
+
     #region cheking coliders 
     private void OnTriggerEnter2D(Collider2D collision)
     {
