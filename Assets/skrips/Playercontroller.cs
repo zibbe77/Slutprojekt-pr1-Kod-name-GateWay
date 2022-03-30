@@ -8,21 +8,28 @@ public class Playercontroller : MonoBehaviour
 
     Rigidbody2D rb2D;
     CapsuleCollider2D cC2D;
+    LayerMask JumpingOkej;
+
+    // olika speed 
     public float speed = 1;
     public float jumpforce = 10;
-    bool isJump = false;
-    bool isGrund = true;
-    bool down = false;
 
+    // olika vilkor
+    bool isJump = false;
+    bool down = false;
     float moveHorizontal;
+    bool getIsJumpingOkej;
+    bool inAir;
 
     #endregion
 
     // Start is called before the first frame update
     void Start()
     {
+        JumpingOkej = LayerMask.GetMask("JumpingOkej");
         rb2D = gameObject.GetComponent<Rigidbody2D>();
         cC2D = gameObject.GetComponent<CapsuleCollider2D>();
+        inAir = false;
     }
 
     // Update is called once per frame
@@ -33,20 +40,11 @@ public class Playercontroller : MonoBehaviour
         moveHorizontal = Input.GetAxisRaw("Horizontal");
 
         //hop input
-
-        RaycastHit2D hit2D = Physics2D.BoxCast(rb2D.position, new Vector2(cC2D.size.x, 1f), 0, Vector2.up);
-        if (hit2D == true)
-        {
-            Debug.Log("yes");
-        }
-
         if (Input.GetKey(KeyCode.Space) == true)
         {
-            if (isGrund == true)
-            {
-                isJump = true;
-            }
+            isJump = true;
         }
+
         // neråt input
         if (Input.GetKey(KeyCode.S))
         {
@@ -62,19 +60,23 @@ public class Playercontroller : MonoBehaviour
         rb2D.AddForce(new Vector2(moveHorizontal * speed, 0), ForceMode2D.Impulse);
 
         // hoppar 
-        if (isGrund == true && isJump == true)
+        if (isJump == true && IsJumpimngOkej() == true)
         {
             rb2D.AddForce(new Vector2(0, jumpforce), ForceMode2D.Impulse);
             isJump = false;
+            inAir = true;
         }
+        else { isJump = false; }
 
         //rör dig neråt 
         if (down == true)
         {
-
             rb2D.AddForce(new Vector2(0, -speed), ForceMode2D.Impulse);
             down = false;
         }
+
+        #endregion
+        #region rättar input
 
         // begränsar accelrationen 
         if (Mathf.Abs(rb2D.velocity.x) > 8)
@@ -82,39 +84,30 @@ public class Playercontroller : MonoBehaviour
             rb2D.AddForce(new Vector2(-moveHorizontal * speed, 0), ForceMode2D.Impulse);
         }
 
+        // Lägger til kraft när man landar
+
+        Debug.Log(inAir);
+
+        if (getIsJumpingOkej == false && IsJumpimngOkej() == true)
+        {
+            rb2D.AddForce(new Vector2(rb2D.velocity.x, 0), ForceMode2D.Impulse);
+        }
+
+        getIsJumpingOkej = IsJumpimngOkej();
+
+        /*
+        if (getIsJumpingOkej == true)
+        {
+            inAir = false;
+        }
+        */
 
 
         #endregion
     }
 
-    #region cheking coliders 
-    private void OnTriggerEnter2D(Collider2D collision)
+    public bool IsJumpimngOkej()
     {
-        if (collision.gameObject.tag == "box")
-        {
-
-        }
+        return Physics2D.BoxCast(cC2D.bounds.center, new Vector2(cC2D.size.x - .2f, cC2D.size.y), 0f, Vector2.down, .5f, JumpingOkej);
     }
-    private void OnTriggerExit2D(Collider2D collision)
-    {
-
-    }
-
-    private void OnCollisionEnter2D(Collision2D other)
-    {
-        if (other.gameObject.tag == "Grid")
-        {
-            isGrund = true;
-        }
-    }
-
-    private void OnCollisionExit2D(Collision2D other)
-    {
-
-        if (other.gameObject.tag == "Grid")
-        {
-            isGrund = false;
-        }
-    }
-    #endregion
 }
