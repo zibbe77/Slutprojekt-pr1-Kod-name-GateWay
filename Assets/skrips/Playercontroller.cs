@@ -19,7 +19,7 @@ public class Playercontroller : MonoBehaviour
     bool down = false;
     float moveHorizontal;
     bool getIsJumpingOkej;
-    bool inAir;
+    bool isGrund;
 
     #endregion
 
@@ -29,7 +29,7 @@ public class Playercontroller : MonoBehaviour
         JumpingOkej = LayerMask.GetMask("JumpingOkej");
         rb2D = gameObject.GetComponent<Rigidbody2D>();
         cC2D = gameObject.GetComponent<CapsuleCollider2D>();
-        inAir = false;
+
     }
 
     // Update is called once per frame
@@ -64,7 +64,6 @@ public class Playercontroller : MonoBehaviour
         {
             rb2D.AddForce(new Vector2(0, jumpforce), ForceMode2D.Impulse);
             isJump = false;
-            inAir = true;
         }
         else { isJump = false; }
 
@@ -79,29 +78,21 @@ public class Playercontroller : MonoBehaviour
         #region rättar input
 
         // begränsar accelrationen 
+
+        Debug.Log(rb2D.velocity.magnitude);
         if (Mathf.Abs(rb2D.velocity.x) > 8)
         {
             rb2D.AddForce(new Vector2(-moveHorizontal * speed, 0), ForceMode2D.Impulse);
         }
 
         // Lägger til kraft när man landar
-
-        Debug.Log(inAir);
-
-        if (getIsJumpingOkej == false && IsJumpimngOkej() == true)
+        if (getIsJumpingOkej == false && IsJumpimngOkej() == true && rb2D.velocity.magnitude > 14)
         {
             rb2D.AddForce(new Vector2(rb2D.velocity.x, 0), ForceMode2D.Impulse);
         }
 
+
         getIsJumpingOkej = IsJumpimngOkej();
-
-        /*
-        if (getIsJumpingOkej == true)
-        {
-            inAir = false;
-        }
-        */
-
 
         #endregion
     }
@@ -109,5 +100,21 @@ public class Playercontroller : MonoBehaviour
     public bool IsJumpimngOkej()
     {
         return Physics2D.BoxCast(cC2D.bounds.center, new Vector2(cC2D.size.x - .2f, cC2D.size.y), 0f, Vector2.down, .5f, JumpingOkej);
+    }
+
+    private void OnCollisionEnter2D(Collision2D other)
+    {
+        if (other.gameObject.tag == "Grid")
+        {
+            isGrund = true;
+        }
+    }
+
+    private void OnCollisionExit2D(Collision2D other)
+    {
+        if (other.gameObject.tag == "Grid")
+        {
+            isGrund = false;
+        }
     }
 }
