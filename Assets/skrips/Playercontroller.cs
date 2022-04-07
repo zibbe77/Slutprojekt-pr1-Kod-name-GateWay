@@ -86,7 +86,7 @@ public class Playercontroller : MonoBehaviour
         }
 
         // Lägger til kraft när man landar
-        if (getIsJumpingOkej == false && IsJumpimngOkej() == true && rb2D.velocity.magnitude > 14)
+        if (getIsJumpingOkej == false && IsJumpimngOkej() == true && rb2D.velocity.magnitude > 14 && Mathf.Abs(moveHorizontal) == 1)
         {
             rb2D.AddForce(new Vector2(rb2D.velocity.x, 0), ForceMode2D.Impulse);
         }
