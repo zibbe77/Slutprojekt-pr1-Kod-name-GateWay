@@ -12,7 +12,7 @@ public class Playercontroller : MonoBehaviour
 
     // olika speed 
     public float speed = 1;
-    public float jumpforce = 10;
+    public float jumpforce = 5;
 
     // olika vilkor
     bool isJump = false;
@@ -20,6 +20,12 @@ public class Playercontroller : MonoBehaviour
     float moveHorizontal;
     bool getIsJumpingOkej;
     bool isGrund;
+
+    // coyote and jumpbuff
+    float coyoteTime = 0.2f;
+    float coyotetimeDiff;
+    float jumpBuff = 0.5f;
+    float jumpBuffDiff;
 
     #endregion
 
@@ -35,22 +41,46 @@ public class Playercontroller : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        #region coyote and jumpbuff
+        if (IsJumpimngOkej())
+        {
+            coyotetimeDiff = coyoteTime;
+        }
+        else
+        {
+            coyotetimeDiff -= Time.deltaTime;
+        }
+
+        if (Input.GetKey(KeyCode.Space) == true)
+        {
+
+            jumpBuffDiff = jumpBuff;
+        }
+        else
+        {
+            jumpBuffDiff -= Time.deltaTime;
+        }
+        #endregion
         #region input 
         //gå input
         moveHorizontal = Input.GetAxisRaw("Horizontal");
 
         //hop input
-        if (Input.GetKey(KeyCode.Space) == true)
+        if (coyotetimeDiff > 0f && jumpBuffDiff > 0f)
         {
             isJump = true;
+            coyotetimeDiff = 0;
+            jumpBuffDiff = 0;
         }
 
         // neråt input
         if (Input.GetKey(KeyCode.S))
         {
             down = true;
+
         }
         #endregion
+
     }
     void FixedUpdate()
     {
@@ -60,7 +90,7 @@ public class Playercontroller : MonoBehaviour
         rb2D.AddForce(new Vector2(moveHorizontal * speed, 0), ForceMode2D.Impulse);
 
         // hoppar 
-        if (isJump == true && IsJumpimngOkej() == true)
+        if (isJump == true)
         {
             rb2D.AddForce(new Vector2(0, jumpforce), ForceMode2D.Impulse);
             isJump = false;
@@ -79,7 +109,7 @@ public class Playercontroller : MonoBehaviour
 
         // begränsar accelrationen 
 
-        Debug.Log(rb2D.velocity.magnitude);
+        //Debug.Log(rb2D.velocity.magnitude);
         if (Mathf.Abs(rb2D.velocity.x) > 8)
         {
             rb2D.AddForce(new Vector2(-moveHorizontal * speed, 0), ForceMode2D.Impulse);
@@ -90,8 +120,6 @@ public class Playercontroller : MonoBehaviour
         {
             rb2D.AddForce(new Vector2(rb2D.velocity.x, 0), ForceMode2D.Impulse);
         }
-
-
         getIsJumpingOkej = IsJumpimngOkej();
 
         #endregion
