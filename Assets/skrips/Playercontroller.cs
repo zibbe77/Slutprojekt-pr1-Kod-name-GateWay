@@ -12,14 +12,13 @@ public class Playercontroller : MonoBehaviour
 
     // olika speed 
     public float speed = 1;
-    public float jumpforce = 5;
+    public float jumpforce = 0.00001f;
 
     // olika vilkor
     bool isJump = false;
     bool down = false;
     float moveHorizontal;
     bool getIsJumpingOkej;
-    bool isGrund;
 
     // coyote and jumpbuff
     float coyoteTime = 0.2f;
@@ -30,6 +29,12 @@ public class Playercontroller : MonoBehaviour
     //hopp fix
     float jumpFixTime = 0.7f;
     float jumpFixTimeDiff;
+
+    //hopp saker
+    bool holdingDownSpace;
+    float longJump = 1f;
+    float longJumpDiff;
+    bool stopHold;
 
     #endregion
 
@@ -45,18 +50,26 @@ public class Playercontroller : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        #region coyote and jumpbuff
+        #region coyote and jumpbuff and LongJump
         if (IsJumpimngOkej())
         {
             jumpFixTimeDiff = jumpFixTime;
             coyotetimeDiff = coyoteTime;
+            longJumpDiff = longJump;
         }
         else
         {
             coyotetimeDiff -= Time.deltaTime;
             jumpFixTimeDiff -= Time.deltaTime;
+            longJumpDiff -= Time.deltaTime;
         }
 
+        #endregion
+        #region input 
+        //gå input
+        moveHorizontal = Input.GetAxisRaw("Horizontal");
+
+        //hop input
         if (Input.GetKey(KeyCode.Space) == true)
         {
             jumpBuffDiff = jumpBuff;
@@ -65,24 +78,29 @@ public class Playercontroller : MonoBehaviour
         {
             jumpBuffDiff -= Time.deltaTime;
         }
-        #endregion
-        #region input 
-        //gå input
-        moveHorizontal = Input.GetAxisRaw("Horizontal");
 
-        //hop input
         if (coyotetimeDiff > 0f && jumpBuffDiff > 0f)
         {
             isJump = true;
             coyotetimeDiff = 0;
             jumpBuffDiff = 0;
         }
+        if (Input.GetKeyDown(KeyCode.Space))
+        {
+            holdingDownSpace = true;
+        }
+        else
+        {
+            stopHold = false;
+        }
 
+        if (IsJumpimngOkej() == true) { stopHold = true; }
+
+        Debug.Log(stopHold);
         // neråt input
         if (Input.GetKey(KeyCode.S))
         {
             down = true;
-
         }
         #endregion
 
@@ -101,6 +119,12 @@ public class Playercontroller : MonoBehaviour
             isJump = false;
         }
         else { isJump = false; }
+
+        if (holdingDownSpace == true && longJumpDiff > 0f && stopHold == true)
+        {
+            rb2D.AddForce(new Vector2(0, jumpforce), ForceMode2D.Impulse);
+            holdingDownSpace = false;
+        }
 
         //rör dig neråt 
         if (down == true)
@@ -133,21 +157,5 @@ public class Playercontroller : MonoBehaviour
     public bool IsJumpimngOkej()
     {
         return Physics2D.BoxCast(cC2D.bounds.center, new Vector2(cC2D.size.x - .2f, cC2D.size.y), 0f, Vector2.down, .5f, JumpingOkej);
-    }
-
-    private void OnCollisionEnter2D(Collision2D other)
-    {
-        if (other.gameObject.tag == "Grid")
-        {
-            isGrund = true;
-        }
-    }
-
-    private void OnCollisionExit2D(Collision2D other)
-    {
-        if (other.gameObject.tag == "Grid")
-        {
-            isGrund = false;
-        }
     }
 }
