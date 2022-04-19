@@ -27,6 +27,10 @@ public class Playercontroller : MonoBehaviour
     float jumpBuff = 0.5f;
     float jumpBuffDiff;
 
+    //hopp fix
+    float jumpFixTime = 0.7f;
+    float jumpFixTimeDiff;
+
     #endregion
 
     // Start is called before the first frame update
@@ -44,16 +48,17 @@ public class Playercontroller : MonoBehaviour
         #region coyote and jumpbuff
         if (IsJumpimngOkej())
         {
+            jumpFixTimeDiff = jumpFixTime;
             coyotetimeDiff = coyoteTime;
         }
         else
         {
             coyotetimeDiff -= Time.deltaTime;
+            jumpFixTimeDiff -= Time.deltaTime;
         }
 
         if (Input.GetKey(KeyCode.Space) == true)
         {
-
             jumpBuffDiff = jumpBuff;
         }
         else
@@ -109,16 +114,16 @@ public class Playercontroller : MonoBehaviour
 
         // begränsar accelrationen 
 
-        //Debug.Log(rb2D.velocity.magnitude);
         if (Mathf.Abs(rb2D.velocity.x) > 8)
         {
             rb2D.AddForce(new Vector2(-moveHorizontal * speed, 0), ForceMode2D.Impulse);
         }
 
         // Lägger til kraft när man landar
-        if (getIsJumpingOkej == false && IsJumpimngOkej() == true && rb2D.velocity.magnitude > 14 && Mathf.Abs(moveHorizontal) == 1)
+        if (getIsJumpingOkej == false && IsJumpimngOkej() == true && rb2D.velocity.magnitude > 14 && Mathf.Abs(moveHorizontal) == 1 && jumpFixTimeDiff < 0f)
         {
             rb2D.AddForce(new Vector2(rb2D.velocity.x, 0), ForceMode2D.Impulse);
+            jumpBuffDiff = 0;
         }
         getIsJumpingOkej = IsJumpimngOkej();
 
