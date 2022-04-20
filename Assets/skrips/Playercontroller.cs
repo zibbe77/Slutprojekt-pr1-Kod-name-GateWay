@@ -12,7 +12,7 @@ public class Playercontroller : MonoBehaviour
 
     // olika speed 
     public float speed = 1;
-    public float jumpforce = 0.00001f;
+    public float jumpforce = 0.000001f;
 
     // olika vilkor
     bool isJump = false;
@@ -25,10 +25,6 @@ public class Playercontroller : MonoBehaviour
     float coyotetimeDiff;
     float jumpBuff = 0.5f;
     float jumpBuffDiff;
-
-    //hopp fix
-    float jumpFixTime = 0.7f;
-    float jumpFixTimeDiff;
 
     //hopp saker
     bool holdingDownSpace;
@@ -44,7 +40,6 @@ public class Playercontroller : MonoBehaviour
         JumpingOkej = LayerMask.GetMask("JumpingOkej");
         rb2D = gameObject.GetComponent<Rigidbody2D>();
         cC2D = gameObject.GetComponent<CapsuleCollider2D>();
-
     }
 
     // Update is called once per frame
@@ -53,14 +48,12 @@ public class Playercontroller : MonoBehaviour
         #region coyote and jumpbuff and LongJump
         if (IsJumpimngOkej())
         {
-            jumpFixTimeDiff = jumpFixTime;
             coyotetimeDiff = coyoteTime;
             longJumpDiff = longJump;
         }
         else
         {
             coyotetimeDiff -= Time.deltaTime;
-            jumpFixTimeDiff -= Time.deltaTime;
             longJumpDiff -= Time.deltaTime;
         }
 
@@ -89,14 +82,13 @@ public class Playercontroller : MonoBehaviour
         {
             holdingDownSpace = true;
         }
-        else
+
+        if (Input.GetKeyUp(KeyCode.Space))
         {
-            stopHold = false;
+            holdingDownSpace = false;
         }
 
-        if (IsJumpimngOkej() == true) { stopHold = true; }
 
-        Debug.Log(stopHold);
         // neråt input
         if (Input.GetKey(KeyCode.S))
         {
@@ -120,10 +112,9 @@ public class Playercontroller : MonoBehaviour
         }
         else { isJump = false; }
 
-        if (holdingDownSpace == true && longJumpDiff > 0f && stopHold == true)
+        if (holdingDownSpace == true && longJumpDiff > 0)
         {
             rb2D.AddForce(new Vector2(0, jumpforce), ForceMode2D.Impulse);
-            holdingDownSpace = false;
         }
 
         //rör dig neråt 
@@ -144,7 +135,7 @@ public class Playercontroller : MonoBehaviour
         }
 
         // Lägger til kraft när man landar
-        if (getIsJumpingOkej == false && IsJumpimngOkej() == true && rb2D.velocity.magnitude > 14 && Mathf.Abs(moveHorizontal) == 1 && jumpFixTimeDiff < 0f)
+        if (getIsJumpingOkej == false && IsJumpimngOkej() == true && rb2D.velocity.magnitude > 14 && Mathf.Abs(moveHorizontal) == 1)
         {
             rb2D.AddForce(new Vector2(rb2D.velocity.x, 0), ForceMode2D.Impulse);
             jumpBuffDiff = 0;
@@ -156,6 +147,6 @@ public class Playercontroller : MonoBehaviour
 
     public bool IsJumpimngOkej()
     {
-        return Physics2D.BoxCast(cC2D.bounds.center, new Vector2(cC2D.size.x - .2f, cC2D.size.y), 0f, Vector2.down, .5f, JumpingOkej);
+        return Physics2D.BoxCast(cC2D.bounds.center, new Vector2(cC2D.size.x - .2f, cC2D.size.y), 0f, Vector2.down, .1f, JumpingOkej);
     }
 }
