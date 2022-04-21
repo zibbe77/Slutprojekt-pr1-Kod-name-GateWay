@@ -105,13 +105,14 @@ public class Playercontroller : MonoBehaviour
         rb2D.AddForce(new Vector2(moveHorizontal * speed, 0), ForceMode2D.Impulse);
 
         // hoppar 
+        /*
         if (isJump == true)
         {
             rb2D.AddForce(new Vector2(0, jumpforce), ForceMode2D.Impulse);
             isJump = false;
         }
         else { isJump = false; }
-
+        */
         if (holdingDownSpace == true && longJumpDiff > 0)
         {
             rb2D.AddForce(new Vector2(0, jumpforce), ForceMode2D.Impulse);
