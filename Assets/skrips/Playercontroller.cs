@@ -12,25 +12,19 @@ public class Playercontroller : MonoBehaviour
 
     // olika speed 
     public float speed;
+    public float maxSpeed;
     public float upSpeed;
 
     // olika vilkor
     bool isJump = false;
     bool down = false;
     float moveHorizontal;
-    bool getIsJumpingOkej;
-
-    // coyote and jumpbuff
-    float coyoteTime = 0.2f;
-    float coyotetimeDiff;
-    float jumpBuff = 0.5f;
-    float jumpBuffDiff;
 
     //hopp saker
     bool holdingDownSpace;
     public float longJump;
     float longJumpDiff;
-    bool stopHold;
+    bool isJumpOkejSet;
 
     #endregion
 
@@ -45,39 +39,31 @@ public class Playercontroller : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        #region coyote and jumpbuff and LongJump
-        if (IsJumpimngOkej())
+        //effiktivar hoppas jag 
+        isJumpOkejSet = IsJumpimngOkej();
+
+        #region LongJump timer
+        if (isJumpOkejSet)
         {
-            coyotetimeDiff = coyoteTime;
             longJumpDiff = longJump;
         }
         else
         {
-            coyotetimeDiff -= Time.deltaTime;
             longJumpDiff -= Time.deltaTime;
         }
 
         #endregion
         #region input 
+        
         //gå input
         moveHorizontal = Input.GetAxisRaw("Horizontal");
 
         //hop input
         if (Input.GetKey(KeyCode.Space) == true)
         {
-            jumpBuffDiff = jumpBuff;
-        }
-        else
-        {
-            jumpBuffDiff -= Time.deltaTime;
+            isJump = true;
         }
 
-        if (coyotetimeDiff > 0f && jumpBuffDiff > 0f)
-        {
-            isJump = true;
-            coyotetimeDiff = 0;
-            jumpBuffDiff = 0;
-        }
         if (Input.GetKeyDown(KeyCode.Space))
         {
             holdingDownSpace = true;
@@ -87,7 +73,6 @@ public class Playercontroller : MonoBehaviour
         {
             holdingDownSpace = false;
         }
-
 
         // neråt input
         if (Input.GetKey(KeyCode.S))
@@ -99,16 +84,27 @@ public class Playercontroller : MonoBehaviour
     }
     void FixedUpdate()
     {
-        #region transulating input
-
-        Debug.Log(upSpeed);
-
+        #region gå
+            
+        #endregion
         //gå 
         rb2D.AddForce(new Vector2(moveHorizontal * speed, 0), ForceMode2D.Impulse);
+
+        #region transulating input hopp
 
         if (holdingDownSpace == true && longJumpDiff > 0)
         {
             rb2D.AddForce(new Vector2(0, upSpeed), ForceMode2D.Impulse);
+        }
+
+        if (isJump == true && isJumpOkejSet == true)
+        {
+            rb2D.AddForce(new Vector2(0, upSpeed * 3), ForceMode2D.Impulse);
+            isJump = false;
+        }
+        else if (isJump == true)
+        {
+            isJump = false;
         }
 
         //rör dig neråt 
@@ -123,19 +119,10 @@ public class Playercontroller : MonoBehaviour
 
         // begränsar accelrationen 
 
-        if (Mathf.Abs(rb2D.velocity.x) > 8)
+        if (Mathf.Abs(rb2D.velocity.x) > maxSpeed)
         {
             rb2D.AddForce(new Vector2(-moveHorizontal * speed, 0), ForceMode2D.Impulse);
         }
-
-        // Lägger til kraft när man landar
-        if (getIsJumpingOkej == false && IsJumpimngOkej() == true && rb2D.velocity.magnitude > 14 && Mathf.Abs(moveHorizontal) == 1)
-        {
-            rb2D.AddForce(new Vector2(rb2D.velocity.x, 0), ForceMode2D.Impulse);
-            jumpBuffDiff = 0;
-        }
-        getIsJumpingOkej = IsJumpimngOkej();
-
         #endregion
     }
 
