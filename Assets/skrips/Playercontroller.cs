@@ -26,6 +26,11 @@ public class Playercontroller : MonoBehaviour
     float longJumpDiff;
     bool isJumpOkejSet;
 
+    //gå 
+    public float Acceleration; 
+    public float decceleration;
+    public float speedPower;
+
     #endregion
 
     // Start is called before the first frame update
@@ -54,7 +59,7 @@ public class Playercontroller : MonoBehaviour
 
         #endregion
         #region input 
-        
+
         //gå input
         moveHorizontal = Input.GetAxisRaw("Horizontal");
 
@@ -84,11 +89,20 @@ public class Playercontroller : MonoBehaviour
     }
     void FixedUpdate()
     {
+        
         #region gå
-            
+            // kommer ifrån https://www.youtube.com/watch?v=KbtcEVCM7bw&list=LL&index=3&t=126s
+        //räknar utt den hastigheten vi vill nå
+        float targetSpeed = moveHorizontal * maxSpeed;
+        //räknar utt skilnaden 
+        float speedDif = targetSpeed - rb2D.velocity.x;
+        //chekar om den ska axelera eller decceleration --- Går att ta bort för att den för den är bara kalubreing
+        float accelRate = (Mathf.Abs(targetSpeed) > 0.01f) ? Acceleration : decceleration;
+        //räknar ut hastigheren -- Sign tar rikningen 
+        float movement = Mathf.Pow(Mathf.Abs(speedDif)* accelRate, speedPower) * Mathf.Sign(speedDif);
+
+        rb2D.AddForce(movement * Vector2.right, ForceMode2D.Impulse);
         #endregion
-        //gå 
-        rb2D.AddForce(new Vector2(moveHorizontal * speed, 0), ForceMode2D.Impulse);
 
         #region transulating input hopp
 
@@ -118,11 +132,12 @@ public class Playercontroller : MonoBehaviour
         #region rättar input
 
         // begränsar accelrationen 
-
+        /*
         if (Mathf.Abs(rb2D.velocity.x) > maxSpeed)
         {
             rb2D.AddForce(new Vector2(-moveHorizontal * speed, 0), ForceMode2D.Impulse);
         }
+        */
         #endregion
     }
 
