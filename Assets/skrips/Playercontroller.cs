@@ -148,7 +148,7 @@ public class Playercontroller : MonoBehaviour
         if (dashTimerDiff > 0)
         {
             // rb2D.AddForce(startSpeed * 20);
-            rb2D.AddForce(startSpeed * (startSpeed.y == 0 ? 20 : 4));
+            rb2D.AddForce(startSpeed * (startSpeed.y == 0 ? 20 : 2));
             Debug.Log(startSpeed);
         }
 
