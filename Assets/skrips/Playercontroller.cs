@@ -12,7 +12,8 @@ public class Playercontroller : MonoBehaviour
 
     // olika speed 
     public float speed;
-    public float maxSpeed;
+    public float startMaxSpeed;
+    float maxSpeed;
     public float upSpeed;
 
     // olika vilkor
@@ -31,11 +32,17 @@ public class Playercontroller : MonoBehaviour
     public float decceleration;
     public float speedPower;
 
+    //dash 
+    Vector2 startSpeed;
+    float dashtimer = 0.5f;
+    float dashTimerDiff;
+
     #endregion
 
     // Start is called before the first frame update
     void Start()
     {
+        maxSpeed = startMaxSpeed;
         JumpingOkej = LayerMask.GetMask("JumpingOkej");
         rb2D = gameObject.GetComponent<Rigidbody2D>();
         cC2D = gameObject.GetComponent<CapsuleCollider2D>();
@@ -58,7 +65,7 @@ public class Playercontroller : MonoBehaviour
         }
 
         #endregion
-        #region input 
+        #region input rörelse
 
         //gå input
         moveHorizontal = Input.GetAxisRaw("Horizontal");
@@ -84,12 +91,21 @@ public class Playercontroller : MonoBehaviour
         {
             down = true;
         }
+
+        if (Input.GetKey(KeyCode.E) == true)
+        {
+            if (dashTimerDiff < 0) { startSpeed = rb2D.velocity; }
+            dashTimerDiff = dashtimer;
+        }
+        else
+        {
+            dashTimerDiff -= Time.deltaTime;
+        }
         #endregion
 
     }
     void FixedUpdate()
     {
-
         #region gå
         // kommer ifrån https://www.youtube.com/watch?v=KbtcEVCM7bw&list=LL&index=3&t=126s
         //räknar utt den hastigheten vi vill nå
@@ -103,7 +119,6 @@ public class Playercontroller : MonoBehaviour
 
         rb2D.AddForce(movement * Vector2.right, ForceMode2D.Impulse);
         #endregion
-
         #region transulating input hopp
 
         if (holdingDownSpace == true && longJumpDiff > 0)
@@ -129,15 +144,14 @@ public class Playercontroller : MonoBehaviour
         }
 
         #endregion
-        #region rättar input
-
-        // begränsar accelrationen 
-        /*
-        if (Mathf.Abs(rb2D.velocity.x) > maxSpeed)
+        #region Dash 
+        if (dashTimerDiff > 0)
         {
-            rb2D.AddForce(new Vector2(-moveHorizontal * speed, 0), ForceMode2D.Impulse);
+            // rb2D.AddForce(startSpeed * 20);
+            rb2D.AddForce(startSpeed * (startSpeed.y == 0 ? 20 : 4));
+            Debug.Log(startSpeed);
         }
-        */
+
         #endregion
     }
 
