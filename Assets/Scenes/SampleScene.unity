@@ -550,8 +550,12 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   speed: 0.8
+  maxSpeed: 8
   upSpeed: 2.5
   longJump: 0.2
+  Acceleration: 0.2
+  decceleration: 0.2
+  speedPower: 0.9
 --- !u!212 &674575290
 SpriteRenderer:
   m_ObjectHideFlags: 0
