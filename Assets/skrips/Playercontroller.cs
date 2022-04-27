@@ -157,6 +157,6 @@ public class Playercontroller : MonoBehaviour
 
     public bool IsJumpimngOkej()
     {
-        return Physics2D.BoxCast(cC2D.bounds.center, new Vector2(cC2D.size.x - .2f, cC2D.size.y), 0f, Vector2.down, .1f, JumpingOkej);
+        return Physics2D.BoxCast(cC2D.bounds.center, new Vector2(cC2D.size.x - .2f, cC2D.size.y - 0.8f), 0f, Vector2.down, 0.5f, JumpingOkej);
     }
 }
